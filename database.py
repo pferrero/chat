@@ -2,13 +2,13 @@ import sqlite3
 import datetime
 
 #DB_NAME = "file::memory:?cache=shared"
-DB_NAME = "/tmp/test.db"
+DB_NAME = "test.db"
 
 ### Crear tablas
-with open('modelo.sql') as script:
-    connection = sqlite3.connect(DB_NAME)
-    connection.executescript(script.read())
-    connection.close()
+#with open('modelotest.sql') as script:
+#    connection = sqlite3.connect(DB_NAME)
+#    connection.executescript(script.read())
+#    connection.close()
 
 def nuevo_usuario(user_name, user_pass):
     """
@@ -30,7 +30,7 @@ def nuevo_usuario(user_name, user_pass):
     con.close()
     return True
 
-def verificar_usuario(user_name, user_pass):
+def check_login(user_name, user_pass):
     """
     Verifica que el usuario exista y la contraseña sea correcta para
     hacer el login.
@@ -47,6 +47,21 @@ def verificar_usuario(user_name, user_pass):
         password = cur.fetchone()
     con.close()
     return password != None and password[0] == user_pass
+
+def exists_user(username):
+    """
+    Checks if a user exists in the database.
+    :param username: The username to check.
+    :type username: str
+    :return: bool
+    """
+    con = sqlite3.connect(DB_NAME)
+    with con:
+        cur = con.execute("SELECT 1 FROM usuario WHERE username = ?",
+                          (username,))
+        exists = cur.fetchone()
+    con.close()
+    return exists != None
 
 def crear_mensaje(from_username, to_username, msg):
     """
@@ -95,8 +110,9 @@ def get_mensajes_from_to(from_username, to_username, from_datetime=None, to_date
             """,
             (from_username, to_username)
         )
-        return res.fetchall()
+    messages = res.fetchall()
     con.close()
+    return messages
 
 def get_mensajes(user1, user2, from_datetime=None, to_datetime=None):
     """
@@ -120,5 +136,6 @@ def get_mensajes(user1, user2, from_datetime=None, to_datetime=None):
             """,
             (user1, user2, user2, user1)
         )
+    messages = res.fetchall()
     con.close()
-    return res.fetchall()
+    return messages
