@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title>Chat app</title>
-</head>
-<body>
+{# base inheritance #}
+{% extends "base.html.jinja" %}
+{# fill title block #}
+{% block title %}Index{% endblock %}
+{# fill content block #}
+{% block content %}
     <h1 id="titulo">My chat app</h1>
-    
     <ul>
         <li><a href='{{ signup_link }}'>Sign up</a></li>
         <li><a href='{{ login_link }}'>Log in</a></li>
     </ul>
-</body>
-</html>
+{% endblock %}

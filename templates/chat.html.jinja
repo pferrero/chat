@@ -1,0 +1,29 @@
+{# base inheritance #}
+{% extends "base.html.jinja" %}
+{# fill title block #}
+{% block title %}Chat{% endblock %}
+{# add script to head block #}
+{% block head %}
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='chatScript.js') }}"></script>
+{% endblock head %}
+{# fill content block #}
+{% block content %}
+    <h1 id="chatTitle">Chat with {{ contact }}</h1>
+    <div id="divMessages" class="scroll">{{ messages }}</div><br>
+    <div id="divLoadMessages">
+        <button type="button" onclick="fill();">Load messages</button>
+    </div><br>
+    <div id="divWriteSend">
+        <form action="sendMessage" method="POST">
+            <input type="text" name="txtMessage">
+            <input type="submit" value="Send">
+        </form>
+    </div>
+{% endblock %}
+{# add logout button and back button to footer #}
+{% block footer %}
+    <a href="home">Back to home</a><br>
+    <a href="logout">Logout</a>
+    {{ super() }}
+{% endblock footer %}

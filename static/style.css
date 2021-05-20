@@ -1,0 +1,36 @@
+div.scroll {
+    background-color: #109384;
+    width: 40%;
+    height: 150px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Chat containers */
+.chatContainer {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+  
+/* Darker chat container */
+.darker {
+    border-color: #ccc;
+    background-color: #ddd;
+}
+
+  /* Style time text */
+.time-right {
+    float: right;
+    color: #aaa;
+}
+  
+/* Style time text */
+.time-left {
+    float: left;
+    color: #999;
+}

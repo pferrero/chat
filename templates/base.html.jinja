@@ -2,16 +2,25 @@
 <html lang="es">
 <head>
     {% block head %}
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <title>{% block title %}{% endblock %}</title>
     {% endblock %}
 </head>
 <body>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">
-        <a href="index">Index</a>
+        <a href="{{ url_for('index') }}">Index</a>
         {% block footer %}
-        &copy; Copyright 2008 by <a href="http://domain.invalid/">you</a>.
+        &copy; Copyright 2021
         {% endblock %}
     </div>
 </body>
