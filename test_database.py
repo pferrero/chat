@@ -1,5 +1,6 @@
 import unittest
 import database as db
+from datetime import datetime
 
 class TestDatabase(unittest.TestCase):
 
@@ -59,6 +60,29 @@ class TestDatabase(unittest.TestCase):
         messages = db.get_mensajes_from_to("user2", "user1")
         self.assertTrue(len(messages) == 2)
 
+    def test_get_messages_date_empty(self):
+        messages = db.get_mensajes("user1", "user2", 
+                                    datetime(2021, 2, 15, 10, 15), 
+                                    datetime(2021, 2, 15, 11, 15))
+        self.assertEqual(0, len(messages))
+
+    def test_get_messages_date(self):
+        messages = db.get_mensajes("user1", "user2", 
+                                    datetime(2021, 2, 15, 10), 
+                                    datetime(2021, 2, 15, 11))
+        self.assertEqual(2, len(messages))
+
+    def test_get_messages_fromto_date_empty(self):
+        messages = db.get_mensajes_from_to("user2", "user1",
+                                           datetime(2021, 2, 15, 10),
+                                           datetime(2021, 2, 15, 11))
+        self.assertEqual(0, len(messages))
+        
+
+    def test_get_messages_fromto_date(self):
+        messages = db.get_mensajes_from_to("user1", "user2",
+                                            datetime(2021, 2, 15, 10, 20))
+        self.assertEqual(1, len(messages))
 
 if __name__ == '__main__':
     unittest.main()

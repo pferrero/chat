@@ -97,6 +97,12 @@ def get_mensajes_from_to(from_username, to_username, from_datetime=None, to_date
     :type to_username: str
     :return: lista de mensajes
     """
+    start_time = ""
+    if from_datetime is not None:
+        start_time = "AND fecha_hora > '" + str(from_datetime) + "'"
+    end_time = ""
+    if to_datetime is not None:
+        end_time = "AND fecha_hora < '" + str(to_datetime) + "'"
     con = sqlite3.connect(DB_NAME)
     with con:
         res = con.execute(
@@ -107,7 +113,9 @@ def get_mensajes_from_to(from_username, to_username, from_datetime=None, to_date
             AND m.to_user = t.id_usuario 
             AND f.username = ? 
             AND t.username = ?
-            """,
+            {}
+            {}
+            """.format(start_time, end_time),
             (from_username, to_username)
         )
     messages = res.fetchall()
@@ -123,6 +131,12 @@ def get_mensajes(user1, user2, from_datetime=None, to_datetime=None):
     :type user2: str
     :return: Lista de mensajes
     """
+    start_time = ""
+    if from_datetime is not None:
+        start_time = "AND fecha_hora > '" + str(from_datetime) + "'"
+    end_time = ""
+    if to_datetime is not None:
+        end_time = "AND fecha_hora < '" + str(to_datetime) + "'"
     con = sqlite3.connect(DB_NAME)
     with con:
         res = con.execute(
@@ -132,8 +146,10 @@ def get_mensajes(user1, user2, from_datetime=None, to_datetime=None):
             WHERE m.from_user = f.id_usuario 
             AND m.to_user = t.id_usuario 
             AND (f.username = ? AND t.username = ? OR f.username = ? AND t.username = ?)
+            {}
+            {}
             ORDER BY m.fecha_hora DESC
-            """,
+            """.format(start_time, end_time),
             (user1, user2, user2, user1)
         )
     messages = res.fetchall()
