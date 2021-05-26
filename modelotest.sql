@@ -24,8 +24,8 @@ INSERT INTO usuario VALUES (3, "user3", "123");
 INSERT INTO usuario VALUES (4, "user4", "123");
 
 -- Insert messages to display
-INSERT INTO mensaje VALUES (1, 1, 2, "m1f1t2", datetime());
-INSERT INTO mensaje VALUES (2, 1, 2, "m2f1t2", datetime());
-INSERT INTO mensaje VALUES (3, 2, 1, "m3f2t1", datetime());
-INSERT INTO mensaje VALUES (4, 2, 1, "m4f2t1", datetime());
-INSERT INTO mensaje VALUES (5, 1, 2, "m5f1t2", datetime());
+INSERT INTO mensaje VALUES (1, 1, 2, "Hi",                datetime('2021-02-15 10:14:00'));
+INSERT INTO mensaje VALUES (2, 1, 2, "How are you?",      datetime('2021-02-15 10:14:01'));
+INSERT INTO mensaje VALUES (3, 2, 1, "Hi",                datetime('2021-02-15 11:15:20'));
+INSERT INTO mensaje VALUES (4, 2, 1, "I'm fine and you?", datetime('2021-02-15 11:15:21'));
+INSERT INTO mensaje VALUES (5, 1, 2, "I'm great",         datetime('2021-02-15 11:15:30'));
