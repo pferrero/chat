@@ -3,7 +3,7 @@ from flask import Flask, request, url_for, render_template, redirect, abort, ses
 import database
 
 USERNAME_KEY = "logged_user"
-CHATWITH_KEY = ""
+CHATWITH_KEY = "chat"
 
 app = Flask(__name__)
 app.secret_key = b'8B\x89f\xf0\x89\xa0\xfb\xdb+\xacDma\xb9?'
@@ -57,9 +57,10 @@ def logout():
     """
     Terminates the user session and redirects to index.
     """
-    session.pop(USERNAME_KEY)
-    session.pop(CHATWITH_KEY)
-    flash("You were successfully logged out.")
+    key = session.pop(USERNAME_KEY, None)
+    session.pop(CHATWITH_KEY, None)
+    if key is not None:
+        flash("You were successfully logged out.")
     return redirect(url_for("index"))
 
 @app.route("/singup", methods=["GET", "POST"])
@@ -134,7 +135,7 @@ def messages():
         return redirect(url_for("login"))
 
     if CHATWITH_KEY not in session:
-        flash(f"Select a contacto to chat with")
+        flash(f"Select a contact to chat with")
         return redirect(url_for("home"))
 
     messages = database.get_mensajes(session[USERNAME_KEY],
@@ -151,3 +152,28 @@ def create_dictionary(tuple):
         "message" : tuple[2],
         "time" : tuple[3]
     }
+
+@app.route("/sendMessage", methods=["POST"])
+def send_message():
+    """
+    Sends a message from the logged user to a contact.
+    If there is no contact, redirects to the home page.
+    """
+    if USERNAME_KEY not in session:
+        flash(f"Not logged in.")
+        return redirect(url_for("login"))
+
+    if CHATWITH_KEY not in session:
+        flash(f"Select a contacto to chat with")
+        return redirect(url_for("home"))
+    
+    msg = request.form.get("txtMessage", default = None)
+    if msg is None:
+        flash(f"No message.")
+        return redirect(url_for("chat"))
+
+    database.crear_mensaje(session[USERNAME_KEY], 
+                           session[CHATWITH_KEY],
+                           msg)
+
+    return {"status": "ok"}
