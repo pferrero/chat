@@ -1,2 +1,8 @@
 # Environment
 venv/
+
+# DB
+*.db
+
+# Cache
+__pycache__/

@@ -1,13 +1,8 @@
-from datetime import timedelta
-from flask import Flask, request, url_for, render_template, redirect, abort, session, flash, jsonify
-import database
+from flask import request, url_for, render_template, redirect, abort, session, flash, jsonify
+from chatapp import app
 
 USERNAME_KEY = "logged_user"
 CHATWITH_KEY = "chat"
-
-app = Flask(__name__)
-app.secret_key = b'8B\x89f\xf0\x89\xa0\xfb\xdb+\xacDma\xb9?'
-app.permanent_session_lifetime = timedelta(days=1)
 
 @app.route('/')
 def index():
