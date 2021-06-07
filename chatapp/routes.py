@@ -1,10 +1,11 @@
 from flask import request, url_for, render_template, redirect, abort, session, flash, jsonify
-from chatapp import app
+from chatapp import app, database
 
 USERNAME_KEY = "logged_user"
 CHATWITH_KEY = "chat"
 
 @app.route('/')
+@app.route("/index")
 def index():
     """
     Displays index page.
