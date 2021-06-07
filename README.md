@@ -11,11 +11,6 @@ Activate the envorinment:
 ```
 source venv/bin/activate
 ```
-Export the envorinment variables:
-```
-export FLASK_ENV=development
-export FLASK_APP=chat.py
-```
 Run the application:
 ```
 flask run
