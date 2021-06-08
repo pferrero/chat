@@ -25,14 +25,14 @@ def login():
     Displays login page if it's a GET request.
     Tries to log user in if it's a POST request.
     """
-    if request.method == "GET":
-        return render_template("baseform.html.jinja", 
-                                title="Log in",
-                                form=LoginForm())
+    form = LoginForm()
+    if form.validate_on_submit():
+        return login_user(form.username.data,
+                          form.password.data)
 
-    elif request.method == "POST":
-        return login_user(request.form.get("username", default=None),
-                          request.form.get("password", default=None))
+    return render_template("baseform.html.jinja", 
+                                title="Log in",
+                                form=form)
         
 def login_user(username, password):
     """
@@ -68,13 +68,14 @@ def signup():
     Displays signup page if it's a GET request.
     Tries to sign the user up if it's a POST request.
     """
-    if request.method == "GET":
-        return render_template("baseform.html.jinja",
-                                title="Sign up",
-                                form=SignupForm())
-    elif request.method == "POST":
-        return signup_user(request.form.get("username", default=None),
-                           request.form.get("password", default=None))
+    form = SignupForm()
+    if form.validate_on_submit():
+        return signup_user(form.username.data,
+                           form.password.data)
+
+    return render_template("baseform.html.jinja",
+                            title="Sign up",
+                            form=form)
 
 def signup_user(user, password):
     """
