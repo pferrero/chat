@@ -1,0 +1,33 @@
+{# base inheritance #}
+{% extends "base.html.jinja" %}
+
+{# fill title block #}
+{% block title %} {{ title }} {% endblock %}
+
+{# fill content block #}
+{% block content %}
+<div class="container">
+    <h1>My chat app - {{ title }}</h1>
+</div>
+
+<div class="container">
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.username.label(class_="form-label") }}
+            {{ form.username(size=32, class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.password.label(class_="form_label") }}<br>
+            {{ form.password(size=32, class="form-control") }}
+        </div>
+        {% if form.remember_me %}
+            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+        {% endif %}
+        <p>
+            {{ form.submit(class="btn btn-primary btn-sm") }}
+            <button type="reset" class="btn btn-primary btn-sm">Reset</button>
+        </p>
+    </form>
+</div>
+{% endblock content %}

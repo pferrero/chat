@@ -1,5 +1,6 @@
 from flask import request, url_for, render_template, redirect, abort, session, flash, jsonify
 from chatapp import app, database
+from chatapp.forms import LoginForm, SignupForm
 
 USERNAME_KEY = "logged_user"
 CHATWITH_KEY = "chat"
@@ -25,11 +26,13 @@ def login():
     Tries to log user in if it's a POST request.
     """
     if request.method == "GET":
-        return render_template("login.html.jinja",
-                                process_login=url_for("login"))
+        return render_template("baseform.html.jinja", 
+                                title="Log in",
+                                form=LoginForm())
+
     elif request.method == "POST":
-        return login_user(request.form.get("txtUser", default=None),
-                          request.form.get("txtPass", default=None))
+        return login_user(request.form.get("username", default=None),
+                          request.form.get("password", default=None))
         
 def login_user(username, password):
     """
@@ -66,12 +69,12 @@ def signup():
     Tries to sign the user up if it's a POST request.
     """
     if request.method == "GET":
-        return render_template("singup.html.jinja",
-                                signup_link=url_for("signup"),
-                                login_link=url_for("login"))
+        return render_template("baseform.html.jinja",
+                                title="Sign up",
+                                form=SignupForm())
     elif request.method == "POST":
-        return signup_user(request.form.get("txtUser", default=None),
-                           request.form.get("txtPass", default=None))
+        return signup_user(request.form.get("username", default=None),
+                           request.form.get("password", default=None))
 
 def signup_user(user, password):
     """
