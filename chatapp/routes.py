@@ -1,6 +1,11 @@
-from flask import request, url_for, render_template, redirect, abort, session, flash, jsonify
+from flask import (
+    request, url_for, render_template, redirect,
+    abort, session, flash, jsonify
+)
+from flask_login import current_user, login_user, logout_user
 from chatapp import app, database
 from chatapp.forms import LoginForm, SignupForm
+from chatapp.models import User
 
 USERNAME_KEY = "logged_user"
 CHATWITH_KEY = "chat"
@@ -25,41 +30,47 @@ def login():
     Displays login page if it's a GET request.
     Tries to log user in if it's a POST request.
     """
+    # if the user navigates to /login but is already authenticated
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
     form = LoginForm()
+    # POST request
     if form.validate_on_submit():
-        return login_user(form.username.data,
-                          form.password.data)
-
+        user = User.query.filter_by(form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash("Invalid username or password", "error")
+            return redirect(url_for("login"))
+        login_user(user, remember=form.remember_me.data)
+        flash(f"Successufully logged in as {user.username}", "message")
+        return redirect(url_for("home"))
+    # GET request
     return render_template("baseform.html.jinja", 
                                 title="Log in",
                                 form=form)
         
-def login_user(username, password):
-    """
-    Tries to log user in.
-    """
-    if username == None or password == None:
-        abort(400)
-    else:
-        login = database.check_login(username, password)
-        if login:
-            session[USERNAME_KEY] = username
-            session.permanent = True
-            flash(f"Successufully logged in as {username}")
-            return redirect(url_for("home"))
-        else:
-            flash(f"Invalid user or password")
-            return redirect(url_for("login"))
+# def login_user(username, password):
+#     """
+#     Tries to log user in.
+#     """
+#     if username == None or password == None:
+#         abort(400)
+#     else:
+#         login = database.check_login(username, password)
+#         if login:
+#             session[USERNAME_KEY] = username
+#             session.permanent = True
+#             flash(f"Successufully logged in as {username}")
+#             return redirect(url_for("home"))
+#         else:
+#             flash(f"Invalid user or password")
+#             return redirect(url_for("login"))
 
 @app.route("/logout")
 def logout():
     """
     Terminates the user session and redirects to index.
     """
-    key = session.pop(USERNAME_KEY, None)
-    session.pop(CHATWITH_KEY, None)
-    if key is not None:
-        flash("You were successfully logged out.")
+    logout_user()
     return redirect(url_for("index"))
 
 @app.route("/singup", methods=["GET", "POST"])
