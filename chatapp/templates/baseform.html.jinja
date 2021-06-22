@@ -16,10 +16,16 @@
         <div class="mb-3">
             {{ form.username.label(class_="form-label") }}
             {{ form.username(size=32, class="form-control") }}
+            {% for error in form.username.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
         </div>
         <div class="mb-3">
             {{ form.password.label(class_="form_label") }}<br>
             {{ form.password(size=32, class="form-control") }}
+            {% for error in form.password.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
         </div>
         {% if form.remember_me %}
             <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>

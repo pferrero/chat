@@ -12,5 +12,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 # login
 login = LoginManager(app)
+login.login_view = "login"
 
 from chatapp import routes, models

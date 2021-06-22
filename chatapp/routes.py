@@ -2,7 +2,10 @@ from flask import (
     request, url_for, render_template, redirect,
     abort, session, flash, jsonify
 )
-from flask_login import current_user, login_user, logout_user
+from werkzeug.urls import url_parse
+from flask_login import (
+    current_user, login_user, logout_user, login_required
+)
 from chatapp import app, database
 from chatapp.forms import LoginForm, SignupForm
 from chatapp.models import User
@@ -17,12 +20,10 @@ def index():
     Displays index page.
     If the user has an active session it redirects the request to home.
     """
-    if USERNAME_KEY not in session:
-        return render_template('index.html.jinja',
-                                signup_link=url_for("signup"),
-                                login_link=url_for("login"))
-    else:
+    if current_user.is_authenticated:
         return redirect(url_for("home"))
+    else:
+        return render_template('index.html.jinja')
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -36,13 +37,19 @@ def login():
     form = LoginForm()
     # POST request
     if form.validate_on_submit():
-        user = User.query.filter_by(form.username.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash("Invalid username or password", "error")
             return redirect(url_for("login"))
+        # Login valid
         login_user(user, remember=form.remember_me.data)
         flash(f"Successufully logged in as {user.username}", "message")
-        return redirect(url_for("home"))
+        # Redirects to next page
+        next_page = request.args.get('next')
+        # Check if next page is null or is a full URL
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('home')
+        return redirect(next_page)
     # GET request
     return render_template("baseform.html.jinja", 
                                 title="Log in",
@@ -103,29 +110,24 @@ def signup_user(user, password):
             return redirect(url_for("signup"))
 
 @app.route("/home")
+@login_required
 def home():
     """
     Displays the home page for logged in users. Otherwise redirects
     the request to login page.
     """
-    user = session.get(USERNAME_KEY)
-    if user == None:
-        flash(f"Not logged in.")
-        return redirect(url_for("login"))
-    else:
-        return render_template("home.html.jinja", username=user)
+    user = current_user
+    return render_template("home.html.jinja")
 
 @app.route("/chat", methods=["POST"])
+@login_required
 def chat():
     """
     Displays the chat page between the logged in user and a contact.
     If the user to chat with does not exist, redirects to home page.
     Otherwise redirects the request to login page.
     """
-    if USERNAME_KEY not in session:
-        flash("Not logged in.")
-        return redirect(url_for("login"))
-    
+    # Create new form in forms module
     contact = request.form.get("txtUser")
     if not database.exists_user(contact):
         flash(f"No se encontró el usuario {contact}")

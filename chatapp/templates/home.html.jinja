@@ -4,15 +4,15 @@
 {% block title %}Home{% endblock %}
 {# fill content block #}
 {% block content %}
-    <h1 id="welcomeMsg">Welcome {{ username }}</h1>
+    <h1 id="welcomeMsg">Welcome {{ current_user.username }}</h1>
     <form action="chat" method="POST">
         <label for="txtUser">User to chat:</label>
         <input type="text" name="txtUser"><br>
         <input type="submit" value="Chat">
     </form>
 {% endblock %}
-{# add logout button to footer #}
+{# add logout button to footer
 {% block footer %}
     <a href="logout">Logout</a>
     {{ super() }}
-{% endblock footer %}
+{% endblock footer %} #}
