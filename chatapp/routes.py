@@ -54,23 +54,6 @@ def login():
     return render_template("baseform.html.jinja", 
                                 title="Log in",
                                 form=form)
-        
-# def login_user(username, password):
-#     """
-#     Tries to log user in.
-#     """
-#     if username == None or password == None:
-#         abort(400)
-#     else:
-#         login = database.check_login(username, password)
-#         if login:
-#             session[USERNAME_KEY] = username
-#             session.permanent = True
-#             flash(f"Successufully logged in as {username}")
-#             return redirect(url_for("home"))
-#         else:
-#             flash(f"Invalid user or password")
-#             return redirect(url_for("login"))
 
 @app.route("/logout")
 def logout():
@@ -140,6 +123,7 @@ def chat():
     return render_template("chat.html.jinja", contact=contact)
 
 @app.route("/messages")
+@login_required
 def messages():
     """
     Returns a list of messages between the logged in user and a contact.
@@ -170,6 +154,7 @@ def create_dictionary(tuple):
     }
 
 @app.route("/sendMessage", methods=["POST"])
+@login_required
 def send_message():
     """
     Sends a message from the logged user to a contact.
