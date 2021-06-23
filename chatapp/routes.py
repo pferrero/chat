@@ -6,7 +6,7 @@ from werkzeug.urls import url_parse
 from flask_login import (
     current_user, login_user, logout_user, login_required
 )
-from chatapp import app, database
+from chatapp import app, db
 from chatapp.forms import LoginForm, RegistrationForm
 from chatapp.models import User
 
@@ -85,31 +85,33 @@ def logout():
 def register():
     """
     Displays signup page if it's a GET request.
-    Tries to sign the user up if it's a POST request.
+    Tries to register the user if it's a POST request.
     """
+    # if the user navigates to /signup or /register 
+    # but is already logged in.
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
     form = RegistrationForm()
     if form.validate_on_submit():
-        return signup_user(form.username.data,
-                           form.password.data)
-
+        # POST request
+        register_user(
+            form.username.data, form.password.data, form.email.data)
+        flash("User registered successfully.")
+        return redirect(url_for("login"))
+    # GET request
     return render_template("baseform.html.jinja",
                             title="Sign up",
                             form=form)
 
-def signup_user(user, password):
+def register_user(user, password, email):
     """
     Tries to sign the user up.
     """
-    if user == None or password == None:
-        return render_template("error.html.jinja", error="Invalid input")
-    else:
-        if database.nuevo_usuario(user, password):
-            flash("New user created Succesfully.")
-            return redirect(url_for("login"))
-        else:
-            flash("Error")
-            return redirect(url_for("signup"))
-
+    user = User(username=user, email=email)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    
 @app.route("/home")
 @login_required
 def home():
