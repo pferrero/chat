@@ -10,7 +10,6 @@ from chatapp import app, db
 from chatapp.forms import LoginForm, RegistrationForm
 from chatapp.models import User
 
-USERNAME_KEY = "logged_user"
 CHATWITH_KEY = "chat"
 
 @app.route('/')
@@ -94,7 +93,13 @@ def register_user(user, password, email):
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
-    
+
+@app.route("/user/<username>")
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template("user.html.jinja", user=user)
+
 @app.route("/home")
 @login_required
 def home():

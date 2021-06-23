@@ -1,0 +1,10 @@
+{# Base inheritance#}
+{% extends "base.html.jinja" %}
+{# Fill content block #}
+{% block content %}
+    <h1>User: {{ user.username }}</h1>
+    <h2>email: {{user.email }}</h2>
+    <hr>
+    Registered since: 2021
+    {# User information #}
+{% endblock %}
