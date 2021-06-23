@@ -7,7 +7,7 @@ from flask_login import (
     current_user, login_user, logout_user, login_required
 )
 from chatapp import app, database
-from chatapp.forms import LoginForm, SignupForm
+from chatapp.forms import LoginForm, RegistrationForm
 from chatapp.models import User
 
 USERNAME_KEY = "logged_user"
@@ -86,7 +86,7 @@ def signup():
     Displays signup page if it's a GET request.
     Tries to sign the user up if it's a POST request.
     """
-    form = SignupForm()
+    form = RegistrationForm()
     if form.validate_on_submit():
         return signup_user(form.username.data,
                            form.password.data)

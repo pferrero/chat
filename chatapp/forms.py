@@ -1,12 +1,28 @@
 from flask_wtf import FlaskForm
 from wtforms   import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, EqualTo, Email, ValidationError
+from chatapp.models import User
 
-class SignupForm(FlaskForm):
+class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Sign up")
-
-class LoginForm(SignupForm):
-    submit = SubmitField("Login")   
     remember_me = BooleanField("Remember me")
+    submit = SubmitField("Login")
+
+class RegistrationForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    password2 = PasswordField("Repeat password", 
+        validators=[DataRequired(), EqualTo("password")])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    submit = SubmitField("Register")   
+    
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None:
+            raise ValidationError("Username already exists.")
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError("Email already exists.")
