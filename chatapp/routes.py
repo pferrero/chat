@@ -80,8 +80,9 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
-@app.route("/singup", methods=["GET", "POST"])
-def signup():
+@app.route("/signup", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
+def register():
     """
     Displays signup page if it's a GET request.
     Tries to sign the user up if it's a POST request.
