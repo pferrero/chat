@@ -4,8 +4,10 @@
 {% block content %}
     <img src="{{ user.avatar_url(128) }}">
     <h1>User: {{ user.username }}</h1>
-    <h2>email: {{user.email }}</h2>
+    <h2>email: {{ user.email }}</h2>
+    <h4>last seen: {{ user.last_seen }}</h4>
     <hr>
-    Registered since: 2021
+    Registered since: {{ user.registered_on }}<br>
     {# User information #}
+    {{ user.abaut_me }}
 {% endblock %}
