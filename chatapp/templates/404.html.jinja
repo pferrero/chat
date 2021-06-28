@@ -7,12 +7,8 @@
     <center>
         <h1>Error</h1>
     </center>
-    {% if error == 404 %}
-        Página no encontrada
-    {% else %}
-        Error
-    {% endif %}
-
+    Page not found.
+    <p><a href="{{ url_for('index') }}">Back</a></p>
     {# a comment #}
 </body>
 </html>
