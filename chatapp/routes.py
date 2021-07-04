@@ -1,11 +1,7 @@
-from flask import (
-    request, url_for, render_template, redirect,
-    abort, session, flash, jsonify
-)
+from flask import (request, url_for, render_template, redirect, session, flash,
+                   jsonify)
 from werkzeug.urls import url_parse
-from flask_login import (
-    current_user, login_user, logout_user, login_required
-)
+from flask_login import (current_user, login_user, logout_user, login_required)
 from chatapp import app, db
 from chatapp.forms import LoginForm, RegistrationForm, EditProfileForm
 from chatapp.models import User
@@ -13,11 +9,13 @@ from datetime import datetime
 
 CHATWITH_KEY = "chat"
 
+
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+
 
 @app.route('/')
 @app.route("/index")
@@ -30,6 +28,7 @@ def index():
         return redirect(url_for("home"))
     else:
         return render_template('index.html.jinja')
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -57,9 +56,8 @@ def login():
             next_page = url_for('home')
         return redirect(next_page)
     # GET request
-    return render_template("baseform.html.jinja", 
-                                title="Log in",
-                                form=form)
+    return render_template("baseform.html.jinja", title="Log in", form=form)
+
 
 @app.route("/logout")
 def logout():
@@ -69,6 +67,7 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
+
 @app.route("/signup", methods=["GET", "POST"])
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -76,21 +75,19 @@ def register():
     Displays signup page if it's a GET request.
     Tries to register the user if it's a POST request.
     """
-    # if the user navigates to /signup or /register 
+    # if the user navigates to /signup or /register
     # but is already logged in.
     if current_user.is_authenticated:
         return redirect(url_for("home"))
     form = RegistrationForm()
     if form.validate_on_submit():
         # POST request
-        register_user(
-            form.username.data, form.password.data, form.email.data)
+        register_user(form.username.data, form.password.data, form.email.data)
         flash("User registered successfully.")
         return redirect(url_for("login"))
     # GET request
-    return render_template("baseform.html.jinja",
-                            title="Sign up",
-                            form=form)
+    return render_template("baseform.html.jinja", title="Sign up", form=form)
+
 
 def register_user(user, password, email):
     """
@@ -101,16 +98,18 @@ def register_user(user, password, email):
     db.session.add(user)
     db.session.commit()
 
+
 @app.route("/user/<username>")
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template("user.html.jinja", user=user)
 
+
 @app.route("/edit_profile", methods=["GET", "POST"])
 @login_required
 def edit_profile():
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
@@ -122,6 +121,7 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template("edit_profile.html.jinja", form=form)
 
+
 @app.route("/home")
 @login_required
 def home():
@@ -129,8 +129,9 @@ def home():
     Displays the home page for logged in users. Otherwise redirects
     the request to login page.
     """
-    #user = current_user
+    # user = current_user
     return render_template("home.html.jinja")
+
 
 @app.route("/chat", methods=["POST"])
 @login_required
@@ -149,6 +150,7 @@ def chat():
     session[CHATWITH_KEY] = contact
     return render_template("chat.html.jinja", contact=contact)
 
+
 @app.route("/messages")
 @login_required
 def messages():
@@ -158,11 +160,11 @@ def messages():
     Otherwise redirects the request to login page.
     """
     if USERNAME_KEY not in session:
-        flash(f"Not logged in.")
+        flash("Not logged in.")
         return redirect(url_for("login"))
 
     if CHATWITH_KEY not in session:
-        flash(f"Select a contact to chat with")
+        flash("Select a contact to chat with")
         return redirect(url_for("home"))
 
     messages = database.get_mensajes(session[USERNAME_KEY],
@@ -172,13 +174,15 @@ def messages():
         message_list.append(create_dictionary(message))
     return jsonify(message_list)
 
+
 def create_dictionary(tuple):
     return {
-        "sender" : tuple[0],
-        "receiver" : tuple[1],
-        "message" : tuple[2],
-        "time" : tuple[3]
+        "sender": tuple[0],
+        "receiver": tuple[1],
+        "message": tuple[2],
+        "time": tuple[3]
     }
+
 
 @app.route("/sendMessage", methods=["POST"])
 @login_required
@@ -188,20 +192,18 @@ def send_message():
     If there is no contact, redirects to the home page.
     """
     if USERNAME_KEY not in session:
-        flash(f"Not logged in.")
+        flash("Not logged in.")
         return redirect(url_for("login"))
 
     if CHATWITH_KEY not in session:
-        flash(f"Select a contacto to chat with")
+        flash("Select a contacto to chat with")
         return redirect(url_for("home"))
 
-    msg = request.form.get("txtMessage", default = None)
+    msg = request.form.get("txtMessage", default=None)
     if msg is None:
-        flash(f"No message.")
+        flash("No message.")
         return redirect(url_for("chat"))
 
-    database.crear_mensaje(session[USERNAME_KEY], 
-                           session[CHATWITH_KEY],
-                           msg)
+    database.crear_mensaje(session[USERNAME_KEY], session[CHATWITH_KEY], msg)
 
     return {"status": "ok"}
