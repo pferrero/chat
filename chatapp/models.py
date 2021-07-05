@@ -1,5 +1,5 @@
 from chatapp import db, login
-from datetime import datetime
+from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from hashlib import md5
@@ -13,7 +13,7 @@ class User(UserMixin, db.Model):
                          nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(120), unique=True, index=True)
-    registered_on = db.Column(db.Date)
+    registered_on = db.Column(db.Date, default=date.today)
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -43,6 +43,18 @@ class Message(db.Model):
 
     def __repr__(self):
         return "<Message {}>".format(self.body)
+
+
+class Open_chats(db.Model):
+    user1_id = db.Column(db.Integer,
+                         db.ForeignKey('user.id'),
+                         primary_key=True,)
+    user2_id = db.Column(db.Integer,
+                         db.ForeignKey('user.id'),
+                         primary_key=True)
+    user1 = db.relationship('User', foreign_keys=user1_id)
+    user2 = db.relationship('User', foreign_keys=user2_id)
+    open_date = db.Column(db.Date, default=date.today)
 
 
 @login.user_loader
