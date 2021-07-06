@@ -1,13 +1,10 @@
-from flask import (request, url_for, render_template, redirect, session, flash,
-                   jsonify)
+from flask import (request, url_for, render_template, redirect, flash, jsonify)
 from werkzeug.urls import url_parse
 from flask_login import (current_user, login_user, logout_user, login_required)
 from chatapp import app, db
 from chatapp.forms import LoginForm, RegistrationForm, EditProfileForm
-from chatapp.models import User
+from chatapp.models import User, Open_chat, Message
 from datetime import datetime
-
-CHATWITH_KEY = "chat"
 
 
 @app.before_request
@@ -129,81 +126,105 @@ def home():
     Displays the home page for logged in users. Otherwise redirects
     the request to login page.
     """
-    # user = current_user
-    return render_template("home.html.jinja")
+    open_chats = Open_chat.query.filter(
+        db.or_(Open_chat.user1 == current_user,
+               Open_chat.user2 == current_user)).all()
+    return render_template("home.html.jinja", chats=open_chats)
 
 
-@app.route("/chat", methods=["POST"])
+@app.route("/chat/<username>")
 @login_required
-def chat():
+def chat(username):
     """
     Displays the chat page between the logged in user and a contact.
-    If the user to chat with does not exist, redirects to home page.
+    If the user to chat with does not exist, raise 404 page.
     Otherwise redirects the request to login page.
     """
-    # Create new form in forms module
-    contact = request.form.get("txtUser")
-    if not database.exists_user(contact):
-        flash(f"No se encontró el usuario {contact}")
-        return redirect(url_for("home"))
+    # Check if the user we are trying to chat with exits.
+    user = User.query.filter_by(username=username).first_or_404()
+    # Check if there is an open chat with that user already
+    # open_chat = Open_chat.query.filter(
+    #     db.or_(
+    #         db.and_(Open_chat.user1 == current_user, Open_chat.user2 == user),
+    #         db.and_(Open_chat.user1 == user,
+    #                 Open_chat.user2 == current_user))).first()
+    # if open_chat is None:
+    #     # Save the open chat
+    #     open_chat = Open_chat(user1=current_user, user2=user)
+    #     db.session.add(open_chat)
+    #     db.session.commit()
+    return render_template("chat.html.jinja", contact=user)
 
-    session[CHATWITH_KEY] = contact
-    return render_template("chat.html.jinja", contact=contact)
 
-
-@app.route("/messages")
+@app.route("/messages/<username>")
 @login_required
-def messages():
+def messages(username):
     """
     Returns a list of messages between the logged in user and a contact.
-    If there is no contact, redirects to the home page.
-    Otherwise redirects the request to login page.
+    If the user does not exists, raise 404.
+    If there are no messages, redirects to the chat page.
+    If the user is not logged in, redirects the request to login page.
     """
-    if USERNAME_KEY not in session:
-        flash("Not logged in.")
-        return redirect(url_for("login"))
-
-    if CHATWITH_KEY not in session:
-        flash("Select a contact to chat with")
-        return redirect(url_for("home"))
-
-    messages = database.get_mensajes(session[USERNAME_KEY],
-                                     session[CHATWITH_KEY])
+    # Check if the user exists.
+    user = User.query.filter_by(username=username).first_or_404()
+    # Check if there is an open chat with that user already
+    open_chat = Open_chat.query.filter(
+        db.or_(
+            db.and_(Open_chat.user1 == current_user, Open_chat.user2 == user),
+            db.and_(Open_chat.user1 == user,
+                    Open_chat.user2 == current_user))).first()
+    if open_chat is None:
+        # Redirect to home.
+        flash("There are no messages.")
+        return redirect(url_for("chat", username=user.username))
+    messages = Message.query.filter(
+        db.or_(
+            db.and_(Message.from_user == current_user,
+                    Message.to_user == user),
+            db.and_(Message.from_user == user,
+                    Message.to_user == current_user))).all()
     message_list = []
     for message in messages:
         message_list.append(create_dictionary(message))
     return jsonify(message_list)
 
 
-def create_dictionary(tuple):
+def create_dictionary(message):
     return {
-        "sender": tuple[0],
-        "receiver": tuple[1],
-        "message": tuple[2],
-        "time": tuple[3]
+        "sender": message.from_user.username,
+        "receiver": message.to_user.username,
+        "message": message.body,
+        "time": message.timestamp
     }
 
 
-@app.route("/sendMessage", methods=["POST"])
+@app.route("/sendMessage/<username>", methods=["POST"])
 @login_required
-def send_message():
+def send_message(username):
     """
     Sends a message from the logged user to a contact.
-    If there is no contact, redirects to the home page.
+    If there is no contact, redirects to the chat page.
     """
-    if USERNAME_KEY not in session:
-        flash("Not logged in.")
-        return redirect(url_for("login"))
-
-    if CHATWITH_KEY not in session:
-        flash("Select a contacto to chat with")
-        return redirect(url_for("home"))
-
+    # Check if the user exists.
+    user = User.query.filter_by(username=username).first_or_404()
+    # Get the body of the message to send.
     msg = request.form.get("txtMessage", default=None)
     if msg is None:
-        flash("No message.")
-        return redirect(url_for("chat"))
-
-    database.crear_mensaje(session[USERNAME_KEY], session[CHATWITH_KEY], msg)
-
+        flash("No Message.")
+        return redirect(url_for("chat", username=user.username))
+    # Check if there is an open chat with that user already
+    open_chat = Open_chat.query.filter(
+        db.or_(
+            db.and_(Open_chat.user1 == current_user, Open_chat.user2 == user),
+            db.and_(Open_chat.user1 == user,
+                    Open_chat.user2 == current_user))).first()
+    if open_chat is None:
+        # Save de open chat
+        open_chat = Open_chat(user1=current_user, user2=user)
+        db.session.add(open_chat)
+        db.session.commit()
+    # Save the message
+    new_msg = Message(from_user=current_user, to_user=user, body=msg)
+    db.session.add(new_msg)
+    db.session.commit()
     return {"status": "ok"}

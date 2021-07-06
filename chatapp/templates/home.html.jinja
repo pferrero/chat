@@ -5,14 +5,21 @@
 {# fill content block #}
 {% block content %}
     <h1 id="welcomeMsg">Welcome {{ current_user.username }}</h1>
+    <ul>
+    {% for chat in chats %}
+        <li> Open chat with:
+        {% if chat.user1.username == current_user.username %}
+            <a href="/chat/{{ chat.user2.username }}">{{ chat.user2.username }}</a>
+        {% else %}
+            <a href="/chat/{{ chat.user1.username }}">{{ chat.user1.username }}</a>
+        {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    Open a new chat with any user:<br>
     <form action="chat" method="POST">
         <label for="txtUser">User to chat:</label>
         <input type="text" name="txtUser"><br>
         <input type="submit" value="Chat">
     </form>
 {% endblock %}
-{# add logout button to footer
-{% block footer %}
-    <a href="logout">Logout</a>
-    {{ super() }}
-{% endblock footer %} #}

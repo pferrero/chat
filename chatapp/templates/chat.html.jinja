@@ -14,16 +14,18 @@
     <div id="divLoadMessages">
         <button type="button" onclick="fill();">Load messages</button>
     </div><br>
-    <div id="divWriteSend">
+    {# <div id="divWriteSend">
         <form action="sendMessage" method="POST">
             <input type="text" name="txtMessage">
             <input type="submit" value="Send">
         </form>
-    </div>
+    </div> #}
+    <form id="msgForm" action="sendMessage" method="POST" style="bottom:0; margin: 0% 0% 0% 0%;">
+        <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Message" aria-label="Message" id="msg">
+              <div class="input-group-append">
+                <button class="btn btn-success" type="submit" id="sendBtn">Send</button>
+              </div>
+        </div>
+    </form>
 {% endblock %}
-{# add logout button and back button to footer #}
-{% block footer %}
-    <a href="home">Back to home</a><br>
-    <a href="logout">Logout</a>
-    {{ super() }}
-{% endblock footer %}
