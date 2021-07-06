@@ -45,16 +45,22 @@ class Message(db.Model):
         return "<Message {}>".format(self.body)
 
 
-class Open_chats(db.Model):
-    user1_id = db.Column(db.Integer,
-                         db.ForeignKey('user.id'),
-                         primary_key=True,)
+class Open_chat(db.Model):
+    user1_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id'),
+        primary_key=True,
+    )
     user2_id = db.Column(db.Integer,
                          db.ForeignKey('user.id'),
                          primary_key=True)
     user1 = db.relationship('User', foreign_keys=user1_id)
     user2 = db.relationship('User', foreign_keys=user2_id)
     open_date = db.Column(db.Date, default=date.today)
+
+    def __repr__(self):
+        return "<Open_chat {}-{}>".format(self.user1.username,
+                                          self.user2.username)
 
 
 @login.user_loader
