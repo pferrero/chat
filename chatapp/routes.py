@@ -140,7 +140,7 @@ def chat(username):
     If the user to chat with does not exist, raise 404 page.
     Otherwise redirects the request to login page.
     """
-    # Check if the user we are trying to chat with exits.
+    # Check if the user we are trying to chat with exists.
     user = User.query.filter_by(username=username).first_or_404()
     # Check if there is an open chat with that user already
     # open_chat = Open_chat.query.filter(
@@ -153,7 +153,7 @@ def chat(username):
     #     open_chat = Open_chat(user1=current_user, user2=user)
     #     db.session.add(open_chat)
     #     db.session.commit()
-    return render_template("chat.html.jinja", contact=user)
+    return render_template("chat.html.jinja", contact=user.username)
 
 
 @app.route("/messages/<username>")

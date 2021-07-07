@@ -9,10 +9,10 @@
 {% endblock head %}
 {# fill content block #}
 {% block content %}
-    <h1 id="chatTitle">Chat with {{ contact }}</h1>
+    <h1 id="chatTitle">Chat with <span id="contact">{{ contact }}</div></h1>
     <div id="divMessages" class="scroll">{{ messages }}</div><br>
     <div id="divLoadMessages">
-        <button type="button" onclick="fill();">Load messages</button>
+        <button type="button" onclick="fill();">refresh</button>
     </div><br>
     {# <div id="divWriteSend">
         <form action="sendMessage" method="POST">
@@ -28,4 +28,7 @@
               </div>
         </div>
     </form>
+    <script>
+        init();
+    </script>
 {% endblock %}
