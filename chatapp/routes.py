@@ -222,7 +222,7 @@ def send_message(username):
         # Save de open chat
         open_chat = Open_chat(user1=current_user, user2=user)
         db.session.add(open_chat)
-        db.session.commit()
+        # db.session.commit()
     # Save the message
     new_msg = Message(from_user=current_user, to_user=user, body=msg)
     db.session.add(new_msg)
