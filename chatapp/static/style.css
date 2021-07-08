@@ -1,7 +1,7 @@
 div.scroll {
-    background-color: #109384;
-    width: 40%;
-    height: 150px;
+    /*background-color: #109384;
+    width: 40%;*/
+    height: 300px;
     overflow-x: hidden;
     overflow-y: auto;
     text-align: center;
@@ -9,7 +9,8 @@ div.scroll {
 }
 
 /* Chat containers */
-.chatContainer {
+.fromThem {
+    text-align: left;
     border: 2px solid #dedede;
     background-color: #f1f1f1;
     border-radius: 5px;
@@ -18,9 +19,14 @@ div.scroll {
 }
   
 /* Darker chat container */
-.darker {
+.fromMe {
+    text-align: right;
+    border: 2px solid;
     border-color: #ccc;
+    border-radius: 5px;
     background-color: #ddd;
+    padding: 10px;
+    margin: 10px 0;
 }
 
   /* Style time text */

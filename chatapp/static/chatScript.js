@@ -32,10 +32,18 @@ var sendMessage = function() {
 function createMessage(name, msg, time) {
     // Create new div message
     var newMsg = document.createElement("div");
-    newMsg.classList.add("chatContainer")
+    if (name == contact) {
+        newMsg.classList.add("fromThem");
+    } else {
+        newMsg.classList.add("fromMe");
+    }
     // Create new title for message (name of the sender)
     var newTitle = document.createElement("span");
-    newTitle.innerText = name;
+    if (name == contact) {
+        newTitle.innerText = name;
+    } else {
+        newTitle.innerText = "me";
+    }
     newMsg.appendChild(newTitle);
     // Create new paragraph for message (content of message)
     var newText  = document.createElement("p");
