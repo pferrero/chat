@@ -7,6 +7,7 @@ var loadMessages = function() {
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             messageList = JSON.parse(this.responseText);
+            clearMessages();
             fill();
         }
     };
@@ -14,17 +15,18 @@ var loadMessages = function() {
     xhttp.send();
 }
 
-var sendMessage = function(msg) {
-    var xhhtp = new XMLHttpRequest();
+var sendMessage = function() {
+    var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            clearMessages();
-            fill();
+            loadMessages();
+            document.getElementById("msg").value = '';
         }
     };
     xhttp.open("POST", "/sendMessage/" + contact, true);
-    // params
-    xhttp.send();
+    let formData = new FormData();
+    formData.append("txtMessage", document.getElementById("msg").value);
+    xhttp.send(formData);
 }
   
 function createMessage(name, msg, time) {
@@ -61,5 +63,6 @@ function fill() {
 function init() {
     divMessages = document.getElementById("divMessages");
     contact = document.getElementById("contact").textContent;
+    document.getElementById("sendBtn").onclick = sendMessage;
     loadMessages();
 }

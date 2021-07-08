@@ -12,22 +12,15 @@
     <h1 id="chatTitle">Chat with <span id="contact">{{ contact }}</div></h1>
     <div id="divMessages" class="scroll">{{ messages }}</div><br>
     <div id="divLoadMessages">
-        <button type="button" onclick="fill();">refresh</button>
+        <button type="button" onclick="loadMessages();">refresh</button>
     </div><br>
-    {# <div id="divWriteSend">
-        <form action="sendMessage" method="POST">
-            <input type="text" name="txtMessage">
-            <input type="submit" value="Send">
-        </form>
-    </div> #}
-    <form id="msgForm" action="sendMessage" method="POST" style="bottom:0; margin: 0% 0% 0% 0%;">
-        <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Message" aria-label="Message" id="msg">
-              <div class="input-group-append">
-                <button class="btn btn-success" type="submit" id="sendBtn">Send</button>
-              </div>
-        </div>
-    </form>
+    {# send button #}
+    <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Message" aria-label="Message" id="msg">
+            <div class="input-group-append">
+            <button class="btn btn-success" type="submit" id="sendBtn">Send</button>
+            </div>
+    </div>
     <script>
         init();
     </script>
