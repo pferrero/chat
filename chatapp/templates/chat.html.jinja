@@ -9,17 +9,17 @@
 {% endblock head %}
 {# fill content block #}
 {% block content %}
-    <h1 id="chatTitle">Chat with <span id="contact">{{ contact }}</div></h1>
-    <div id="divMessages" class="scroll">{{ messages }}</div><br>
+    <h1 id="chatTitle">Chat with <span id="contact">{{ contact }}</h1>
+    <div id="divMessages" class="container-sm scroll">{{ messages }}No messages yet.</div><br>
     <div id="divLoadMessages">
         <button type="button" onclick="loadMessages();">refresh</button>
     </div><br>
     {# send button #}
     <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Message" aria-label="Message" id="msg">
-            <div class="input-group-append">
-            <button class="btn btn-success" type="submit" id="sendBtn">Send</button>
-            </div>
+        <input type="text" class="form-control" placeholder="Message" aria-label="Message" id="msg">
+        <div class="input-group-append">
+        <button class="btn btn-success" type="submit" id="sendBtn">Send</button>
+        </div>
     </div>
     <script>
         init();

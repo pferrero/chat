@@ -5,21 +5,40 @@
 {# fill content block #}
 {% block content %}
     <h1 id="welcomeMsg">Welcome {{ current_user.username }}</h1>
-    <ul>
-    {% for chat in chats %}
-        <li> Open chat with:
-        {% if chat.user1.username == current_user.username %}
-            <a href="/chat/{{ chat.user2.username }}">{{ chat.user2.username }}</a>
-        {% else %}
-            <a href="/chat/{{ chat.user1.username }}">{{ chat.user1.username }}</a>
-        {% endif %}
-        </li>
-    {% endfor %}
-    </ul>
+    
+    {% if not chats %}
+        <p>You don't have any open chats yet.</p>
+    {% else %}
+        <ul>
+        {% for chat in chats %}
+            <li> Open chat with:
+            {% if chat.user1.username == current_user.username %}
+                <a href="/chat/{{ chat.user2.username }}">{{ chat.user2.username }}</a>
+            {% else %}
+                <a href="/chat/{{ chat.user1.username }}">{{ chat.user1.username }}</a>
+            {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
     Open a new chat with any user:<br>
-    <form action="chat" method="POST">
+    {# <form action="chat" method="POST">
         <label for="txtUser">User to chat:</label>
         <input type="text" name="txtUser"><br>
         <input type="submit" value="Chat">
-    </form>
+    </form> #}
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Username" aria-label="Message" id="username">
+        <div class="input-group-append">
+        <button class="btn btn-success" type="submit" id="chatBtn">Chat</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById("chatBtn").onclick = function () {
+            window.location.href = "/chat/" + document.getElementById("username").value;
+            /*var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/chat/" + document.getElementById("username").value, true);
+            xhttp.send();*/
+        }
+    </script>
 {% endblock %}
