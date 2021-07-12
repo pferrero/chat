@@ -3,6 +3,7 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_socketio import SocketIO
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
@@ -16,6 +17,8 @@ migrate = Migrate(app, db)
 # login
 login = LoginManager(app)
 login.login_view = "login"
+# sockets
+socketio = SocketIO(app)
 # logging
 if not app.debug:
     # Configuration of the mail server to send errors by email
@@ -51,4 +54,4 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info("ChatApp startup")
 
-from chatapp import routes, models, errors
+from chatapp import routes, models, errors, events

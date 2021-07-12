@@ -71,6 +71,6 @@ function fill() {
 function init() {
     divMessages = document.getElementById("divMessages");
     contact = document.getElementById("contact").textContent;
-    document.getElementById("sendBtn").onclick = sendMessage;
+    //document.getElementById("sendBtn").onclick = sendMessage;
     loadMessages();
 }

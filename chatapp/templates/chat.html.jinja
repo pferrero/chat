@@ -6,14 +6,45 @@
 {% block head %}
     {{ super() }}
     <script type="text/javascript" src="{{ url_for('static', filename='chatScript.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+            // Connect to the Socket.IO server.
+            // The connection URL has the following format, relative to the current page:
+            //     http[s]://<domain>:<port>[/<namespace>]
+            var socket = io();
+
+            // Event handler for new connections.
+            // The callback function is invoked when a connection with the
+            // server is established.
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });
+
+            // Event handler for server sent data.
+            // The callback function is invoked whenever the server emits data
+            // to the client.
+            socket.on('new_msg', function(msg, cb) {
+                createMessage(msg.name, msg.body, msg.time);
+                $('#msg').val("");
+                console.log(msg);
+                if (cb)
+                    cb();
+            });
+
+            // Handlers for the send button to send a message.
+            $('#sendBtn').click(function(event) {
+                socket.emit('send_msg', {data: $('#msg').val(), username: contact});
+                return false;
+            });
+        });
+    </script>
 {% endblock head %}
 {# fill content block #}
 {% block content %}
     <h1 id="chatTitle">Chat with <span id="contact">{{ contact }}</h1>
     <div id="divMessages" class="container-sm scroll">{{ messages }}No messages yet.</div><br>
-    <div id="divLoadMessages">
-        <button type="button" onclick="loadMessages();">refresh</button>
-    </div><br>
     {# send button #}
     <div class="input-group mb-3">
         <input type="text" class="form-control" placeholder="Message" aria-label="Message" id="msg">

@@ -142,17 +142,6 @@ def chat(username):
     """
     # Check if the user we are trying to chat with exists.
     user = User.query.filter_by(username=username).first_or_404()
-    # Check if there is an open chat with that user already
-    # open_chat = Open_chat.query.filter(
-    #     db.or_(
-    #         db.and_(Open_chat.user1 == current_user, Open_chat.user2 == user),
-    #         db.and_(Open_chat.user1 == user,
-    #                 Open_chat.user2 == current_user))).first()
-    # if open_chat is None:
-    #     # Save the open chat
-    #     open_chat = Open_chat(user1=current_user, user2=user)
-    #     db.session.add(open_chat)
-    #     db.session.commit()
     return render_template("chat.html.jinja", contact=user.username)
 
 
@@ -194,7 +183,7 @@ def create_dictionary(message):
         "sender": message.from_user.username,
         "receiver": message.to_user.username,
         "message": message.body,
-        "time": message.timestamp
+        "time": message.timestamp.isoformat()
     }
 
 

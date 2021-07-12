@@ -3,16 +3,22 @@
 Chat application built using Flask.
 
 ## Usage
-Install the virtual environment with:
+Set up the virtual environment with:
 ```
-pip install -r requirements.txt
+$ virtualenv venv
 ```
 
-Activate the envorinment:
+Activate the virtual envorinment:
 ```
 bash: source venv/bin/activate
 fish: source venv/bin/activate.fish
 ```
+
+Install the dependencies in the venv:
+```
+(venv)$ pip install -r requirements.txt
+```
+
 
 Create the database, this will create the .db file
 with the tables and relations:
@@ -21,12 +27,17 @@ with the tables and relations:
 ```
 
 (optional) Fill the database with some users and
-messages:
+messages to test the application:
 ```
 (venv)$ python populate_db.py
 ```
 
 Run the application:
 ```
-flask run
+(venv)$ flask run
+```
+
+To deactivate the venv simply type:
+```
+(venv)$ deactivate
 ```
