@@ -1,6 +1,9 @@
-# Demo chat application
+# Chat demo application
 
 Chat application built using Flask.
+
+## Screenshot
+![chat screenshot](screenshots/scheenshot1.png "chat app")
 
 ## Usage
 Set up the virtual environment with:
