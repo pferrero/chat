@@ -3,7 +3,7 @@
 Chat application built using Flask.
 
 ## Screenshot
-![chat screenshot](screenshots/scheenshot1.png "chat app")
+![screenshot1](https://user-images.githubusercontent.com/39303220/125351969-1d58d700-e337-11eb-992e-1d1d0dcfba95.png)
 
 ## Usage
 Set up the virtual environment with:
